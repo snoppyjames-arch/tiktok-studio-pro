@@ -1,7 +1,6 @@
 import telebot, requests, os, time, urllib.parse, random
 BOT_TOKEN = "8862760861:AAGQkVyMDXBa8-_zXXNPLJcepLtUqpDgMGI"
 bot = telebot.TeleBot(BOT_TOKEN)
-TikTok viral hashtags
 HASHTAGS = "#tiktok #viral #fyp #foryou #hd #4k #aesthetic #luxury #motivation #trending"
 def get_hd_image(prompt, seed=None):
     q = urllib.parse.quote(f"{prompt}, ultra detailed 8k, sharp focus, cinematic lighting, vertical 9:16, masterpiece")
