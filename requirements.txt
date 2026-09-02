@@ -1,0 +1,6 @@
+pyTelegramBotAPI
+requests
+Pillow
+moviepy
+imageio
+imageio-ffmpeg
