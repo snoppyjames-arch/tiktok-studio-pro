@@ -38,7 +38,7 @@ h1{{margin:5px 0 0 0;font-size:34px;color:#fff}} .h1-gold{{color:#ffcc00;margin:
 <div class="card">
 <p><b>Token:</b><br><span class="small">{TOKEN_ADDRESS}</span></p>
 <p><b>BSC Wallet:</b><br><span class="small">{RECEIVER_WALLET}</span></p>
-<p>📱 Phone FULL? Pay 1000 $ACHV to unlock</p>
+<p>Phone FULL? Pay 1000 $ACHV to unlock</p>
 <button class="btn" id="connect">Connect Wallet</button>
 <button class="btn" id="pay">Pay 1000 $ACHV</button>
 <p id="status" style="color:#00ff88;font-weight:bold"></p>
@@ -47,16 +47,16 @@ h1{{margin:5px 0 0 0;font-size:34px;color:#fff}} .h1-gold{{color:#ffcc00;margin:
 <button type="submit" class="btn btn-blue">Upload</button>
 </form>
 </div>
-<div class="card"><h3>My Files - Delete & Download</h3>
+<div class="card"><h3>My Files</h3>
 {{% for f in files %}}
-<div class="file-row"><span>📁 {{{{f}}}}</span><span><a href="/download/{{{{f}}}}"><button class="btn btn-blue" style="padding:6px 10px">Download</button></a> <a href="/delete/{{{{f}}}}"><button class="btn btn-red">Delete</button></a></span></div>
+<div class="file-row"><span>{{{{f}}}}</span><span><a href="/download/{{{{f}}}}"><button class="btn btn-blue" style="padding:6px 10px">Download</button></a> <a href="/delete/{{{{f}}}}"><button class="btn btn-red">Delete</button></a></span></div>
 {{% endfor %}}
 </div>
 <script>
 const tokenAddress="{TOKEN_ADDRESS}"; const receiver="{RECEIVER_WALLET}";
 const abi=["function transfer(address to,uint amount) returns (bool)"]; let unlocked=false;
-document.getElementById("connect").onclick=async()=>{{ await window.ethereum.request({{method:'eth_requestAccounts'}}); document.getElementById("status").innerText="✅ Connected!"; }};
-document.getElementById("pay").onclick=async()=>{{ try{{ const p=new ethers.BrowserProvider(window.ethereum); const s=await p.getSigner(); const t=new ethers.Contract(tokenAddress,abi,s); const tx=await t.transfer(receiver,ethers.parseUnits("1000",18)); document.getElementById("status").innerText="⏳ Paying..."; await tx.wait(); document.getElementById("status").innerText="✅ Paid! Unlocked"; unlocked=true; }}catch(e){{document.getElementById("status").innerText=e.message}} }};
+document.getElementById("connect").onclick=async()=>{{ await window.ethereum.request({{method:'eth_requestAccounts'}}); document.getElementById("status").innerText="Connected!"; }};
+document.getElementById("pay").onclick=async()=>{{ try{{ const p=new ethers.BrowserProvider(window.ethereum); const s=await p.getSigner(); const t=new ethers.Contract(tokenAddress,abi,s); const tx=await t.transfer(receiver,ethers.parseUnits("1000",18)); document.getElementById("status").innerText="Paying..."; await tx.wait(); document.getElementById("status").innerText="Paid! Unlocked"; unlocked=true; }}catch(e){{document.getElementById("status").innerText=e.message}} }};
 document.getElementById("upForm").onsubmit=(e)=>{{ if(!unlocked){{alert("Pay 1000 $ACHV first!"); e.preventDefault();}} }};
 </script>
 </body>
@@ -85,118 +85,8 @@ def delete_file(name):
 
 @app.route('/logo-192.png')
 def l1(): return send_from_directory('.', 'logo-192.png')
+
 @app.route('/logo-512.png')
 def l2(): return send_from_directory('.', 'logo-512.png')
 
-if __name__ == '__main__': app.run(host='0.0.0.0', port=10000)<div class="top">
-<img class="logo" src="/logo-512.png" onerror="this.src='https://i.ibb.co/7JqXv4x0/achv-logo.png'" alt="ACHV">
-<h1>ACHIEVE</h1>
-<h1 class="h1-gold">$ACHV</h1>
-<div class="motto">We Fix Your Phone, Not Just Your Portfolio.<br><span class="motto-small">Free Your Phone. Save Your Data. Own Your Future.</span></div>
-<p style="font-size:13px">Smart Mobile Archiving - On-Chain Storage on BSC</p>
-</div>
-
-<div class="card">
-<p><b>Contract:</b><br><span class="small">0x39300D499C23c23b682fDd02CCD54d123A0Aa740</span></p>
-<p>📱 Phone FULL? Pay 1000 $ACHV to unlock upload & delete</p>
-<button class="btn" id="connect">Connect Wallet</button>
-<button class="btn" id="pay">Pay 1000 $ACHV</button>
-<p id="status" style="color:#00ff88;font-weight:bold"></p>
-
-<form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm" style="margin-top:15px">
-  <input type="file" name="video" accept="image/*,video/*" required>
-  <button type="submit" class="btn btn-blue">Upload Pic/Video</button>
-</form>
-</div>
-
-<div class="card">
-<h3>My Files - Download & Delete ({{files|length}} files)</h3>
-<p class="small">Enough space - Delete anytime</p>
-{% for f in files %}
-  <div class="file-row">
-    <span>📁 {{f}}</span>
-    <span>
-      <a href="/download/{{f}}"><button class="btn btn-blue" style="padding:6px 10px;font-size:12px">Download</button></a>
-      <a href="/delete/{{f}}"><button class="btn btn-red">Delete</button></a>
-    </span>
-  </div>
-{% endfor %}
-{% if not files %}<p class="small">No files yet - Upload after paying</p>{% endif %}
-</div>
-
-<div class="card">
-<h3>🎓 FREE Crypto Lessons</h3>
-<p style="font-size:13px">Tuesday & Friday 7PM UTC in Telegram</p>
-<a href="https://t.me/ACHIEVEToken" style="color:#00a8ff;font-weight:bold">t.me/ACHIEVEToken</a> | 
-<a href="https://sites.google.com/view/achieve-achvcommunitytoken" style="color:#00a8ff">Website</a>
-</div>
-
-<script>
-const tokenAddress="0x39300D499C23c23b682fDd02CCD54d123A0Aa740";
-const receiver="0xc8863de847ed7487cb276b657ac1331ac2731ed5";
-const abi=["function transfer(address to,uint amount) returns (bool)"];
-let unlocked=false;
-document.getElementById("connect").onclick=async()=>{
- if(!window.ethereum){alert("Open in MetaMask browser");return}
- await window.ethereum.request({method:'eth_requestAccounts'});
- document.getElementById("status").innerText="✅ Connected!";
-};
-document.getElementById("pay").onclick=async()=>{
- try{
-   const p=new ethers.BrowserProvider(window.ethereum);
-   const s=await p.getSigner();
-   const t=new ethers.Contract(tokenAddress,abi,s);
-   const tx=await t.transfer(receiver,ethers.parseUnits("1000",18));
-   document.getElementById("status").innerText="⏳ Paying...";
-   await tx.wait();
-   document.getElementById("status").innerText="✅ Paid 1000 $ACHV - Upload Unlocked!";
-   unlocked=true;
- }catch(e){document.getElementById("status").innerText=e.message}
-};
-document.getElementById("uploadForm").onsubmit=(e)=>{
- if(!unlocked){alert("Pay 1000 $ACHV first to unlock!"); e.preventDefault();}
-};
-</script>
-</body>
-</html>
-"""
-
-@app.route('/')
-def home():
-    files = os.listdir(UPLOAD_FOLDER)
-    return render_template_string(HTML, files=files)
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    file = request.files.get('video')
-    if not file or file.filename == '':
-        return '<script>alert("No file"); window.location="/"</script>'
-    filename = secure_filename(file.filename)
-    file.save(os.path.join(UPLOAD_FOLDER, filename))
-    return '<script>window.location="/"</script>'
-
-@app.route('/download/<name>')
-def download(name):
-    return send_from_directory(UPLOAD_FOLDER, name, as_attachment=True)
-
-@app.route('/delete/<name>')
-def delete_file(name):
-    path = os.path.join(UPLOAD_FOLDER, name)
-    if os.path.exists(path):
-        os.remove(path)
-    return '<script>window.location="/"</script>'
-
-# Serve logo files
-@app.route('/logo-192.png')
-def logo192():
-    return send_from_directory('.', 'logo-192.png')
-
-@app.route('/logo-512.png')
-def logo512():
-    return send_from_directory('.', 'logo-512.png')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)    return send_from_directory(UPLOAD_FOLDER, name, as_attachment=True)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+if __name__ == '__main__': app.run(host='0.0.0.0', port=10000)
