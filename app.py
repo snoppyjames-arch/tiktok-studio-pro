@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Modern asynchronous route handling for concurrent traffic
 @app.route("/")
-async def home():
+def home():
     return """
     <h1 style='text-align:center;margin-top:100px;color:#fe2c55;font-family:sans-serif;'>
         TikTok Studio Pro<br>LIVE 24/7 - ONLINE
