@@ -1,63 +1,56 @@
-from flask import Flask, request, send_from_directory, render_template_string
-import os
-from werkzeug.utils import secure_filename
-
+from flask import Flask, render_template_string
+from datetime import datetime
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-TOKEN_ADDRESS = "0xc8863de847ed7487cb276b657ac1331ac2731ed5"
-RECEIVER_WALLET = "0x39300D499C23c23b682fDd02CCD54d123A0Aa740"
-
-HTML = f"""
-<!DOCTYPE html>
+HTML = """
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ACHIEVE $ACHV - Smart Archiving</title>
-<link rel="icon" href="/logo-192.png">
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.8.1/dist/ethers.umd.min.js"></script>
-<style>
-body{{margin:0;font-family:Arial,sans-serif;background:#0a1628;color:white;text-align:center}}
-.top{{background:linear-gradient(135deg,#00a8ff,#0057ff);padding:25px 15px}}
-.logo{{width:120px;height:120px;border-radius:24px;background:white;padding:8px}}
-h1{{margin:5px 0 0 0;font-size:34px;color:#fff}} .h1-gold{{color:#ffcc00;margin:0;font-size:30px}}
-.motto{{color:#00ff88;font-weight:bold;margin:10px 0}} .btn{{background:#00ff88;color:#000;padding:12px 20px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin:6px}}
-.btn-red{{background:#ff4444;color:white;padding:6px 12px}} .btn-blue{{background:#00a8ff;color:white}}
-.card{{background:#122840;margin:15px auto;padding:18px;border-radius:14px;max-width:450px;border:1px solid #1e3a5f}}
-.small{{font-size:11px;color:#8aa0b8;word-break:break-all}} .file-row{{background:#0f2340;padding:10px;margin:6px 0;border-radius:8px;display:flex;justify-content:space-between}}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="top">
-<img class="logo" src="/logo-512.png" alt="ACHV">
-<h1>ACHIEVE</h1><h1 class="h1-gold">$ACHV</h1>
-<div class="motto">We Fix Your Phone, Not Just Your Portfolio.<br><span style="color:white;font-size:13px">Free Your Phone. Save Your Data. Own Your Future.</span></div>
+<body class="bg-black text-white min-h-screen p-4">
+<div class="max-w-lg mx-auto">
+<div class="bg-zinc-900 rounded-[30px] p-7 border border-zinc-800">
+<h1 class="text-3xl font-black">TikTok Studio Pro</h1>
+<p class="bg-pink-600 inline-block px-3 py-1 rounded-full text-xs font-black mt-2">SUPER FREE - ALL IN ONE</p>
+
+<input id="idea" class="w-full mt-6 p-4 rounded-2xl text-black font-bold text-lg" placeholder="Type your idea: e.g. makeup, football, ndole">
+
+<button onclick="generate()" class="w-full mt-4 bg-white text-black p-4 rounded-2xl font-black text-lg">🚀 Generate 6 in 1 - FREE</button>
+
+<div id="result" class="mt-6 hidden space-y-4">
+
+<div class="bg-zinc-800 p-4 rounded-2xl"><p class="text-pink-400 text-xs font-bold">1. VIRAL IDEA</p><p id="o1" class="mt-1 font-bold"></p></div>
+
+<div class="bg-zinc-800 p-4 rounded-2xl"><p class="text-yellow-400 text-xs font-bold">2. HOOK (First 3 seconds)</p><p id="o2" class="mt-1 font-black text-lg"></p></div>
+
+<div class="bg-zinc-800 p-4 rounded-2xl"><p class="text-green-400 text-xs font-bold">3. FULL SCRIPT (30 sec)</p><p id="o3" class="mt-1 text-sm leading-6"></p></div>
+
+<div class="bg-zinc-800 p-4 rounded-2xl"><p class="text-blue-400 text-xs font-bold">4. HASHTAGS</p><p id="o4" class="mt-1 text-sm"></p></div>
+
+<div class="bg-zinc-800 p-4 rounded-2xl"><p class="text-purple-400 text-xs font-bold">5. BEST TIME TO POST (Yaounde)</p><p id="o5" class="mt-1 font-bold"></p></div>
+
+<div class="bg-zinc-800 p-4 rounded-2xl"><p class="text-orange-400 text-xs font-bold">6. CAPTION READY</p><p id="o6" class="mt-1 text-sm"></p></div>
+
 </div>
-<div class="card">
-<p><b>Token:</b><br><span class="small">{TOKEN_ADDRESS}</span></p>
-<p><b>BSC Wallet:</b><br><span class="small">{RECEIVER_WALLET}</span></p>
-<p>Phone FULL? Pay 1000 $ACHV to unlock</p>
-<button class="btn" id="connect">Connect Wallet</button>
-<button class="btn" id="pay">Pay 1000 $ACHV</button>
-<p id="status" style="color:#00ff88;font-weight:bold"></p>
-<form method="POST" action="/upload" enctype="multipart/form-data" id="upForm" style="margin-top:15px">
-<input type="file" name="video" accept="image/*,video/*" required>
-<button type="submit" class="btn btn-blue">Upload</button>
-</form>
+
+<p class="text-center text-zinc-500 text-[10px] mt-6">FREE BETA - Made in Yaounde 🇨🇲</p>
 </div>
-<div class="card"><h3>My Files</h3>
-{{% for f in files %}}
-<div class="file-row"><span>{{{{f}}}}</span><span><a href="/download/{{{{f}}}}"><button class="btn btn-blue" style="padding:6px 10px">Download</button></a> <a href="/delete/{{{{f}}}}"><button class="btn btn-red">Delete</button></a></span></div>
-{{% endfor %}}
 </div>
+
 <script>
-const tokenAddress="{TOKEN_ADDRESS}"; const receiver="{RECEIVER_WALLET}";
-const abi=["function transfer(address to,uint amount) returns (bool)"]; let unlocked=false;
-document.getElementById("connect").onclick=async()=>{{ await window.ethereum.request({{method:'eth_requestAccounts'}}); document.getElementById("status").innerText="Connected!"; }};
-document.getElementById("pay").onclick=async()=>{{ try{{ const p=new ethers.BrowserProvider(window.ethereum); const s=await p.getSigner(); const t=new ethers.Contract(tokenAddress,abi,s); const tx=await t.transfer(receiver,ethers.parseUnits("1000",18)); document.getElementById("status").innerText="Paying..."; await tx.wait(); document.getElementById("status").innerText="Paid! Unlocked"; unlocked=true; }}catch(e){{document.getElementById("status").innerText=e.message}} }};
-document.getElementById("upForm").onsubmit=(e)=>{{ if(!unlocked){{alert("Pay 1000 $ACHV first!"); e.preventDefault();}} }};
+function generate(){
+let topic = document.getElementById('idea').value;
+if(!topic){ alert('Type idea first!'); return; }
+document.getElementById('result').classList.remove('hidden');
+
+document.getElementById('o1').innerText = `3 ${topic} mistakes you must stop today (Part ${Math.floor(Math.random()*3)+1})`;
+document.getElementById('o2').innerText = `STOP! Don't post about ${topic} before watching this!`;
+document.getElementById('o3').innerHTML = `[0-3s] HOOK: Stop scrolling!<br>[3-8s] PROBLEM: 90% people fail at ${topic} because they do this...<br>[8-20s] SOLUTION: Do this instead: 1. Show result 2. Show how 3. Show proof<br>[20-30s] CTA: Follow for Part 2 + Comment "${topic}"`;
+document.getElementById('o4').innerText = `#${topic.replace(/ /g,'')} #fyp #viral #cameroon #yaounde #tiktokgrowth #${topic.replace(/ /g,'')}tips`;
+document.getElementById('o5').innerText = `Today 7:00 PM - 9:30 PM (Yaounde time) - Best time, people are online`;
+document.getElementById('o6').innerText = `I tried ${topic} for 7 days and this happened 😳 Full secret in video 👆 #${topic.replace(/ /g,'')} Follow for more!`;
+}
 </script>
 </body>
 </html>
@@ -65,28 +58,7 @@ document.getElementById("upForm").onsubmit=(e)=>{{ if(!unlocked){{alert("Pay 100
 
 @app.route('/')
 def home():
-    files = os.listdir(UPLOAD_FOLDER)
-    return render_template_string(HTML, files=files)
+    return render_template_string(HTML)
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    f = request.files.get('video')
-    if f: f.save(os.path.join(UPLOAD_FOLDER, secure_filename(f.filename)))
-    return '<script>window.location="/"</script>'
-
-@app.route('/download/<name>')
-def download(name): return send_from_directory(UPLOAD_FOLDER, name, as_attachment=True)
-
-@app.route('/delete/<name>')
-def delete_file(name):
-    p=os.path.join(UPLOAD_FOLDER,name)
-    if os.path.exists(p): os.remove(p)
-    return '<script>window.location="/"</script>'
-
-@app.route('/logo-192.png')
-def l1(): return send_from_directory('.', 'logo-192.png')
-
-@app.route('/logo-512.png')
-def l2(): return send_from_directory('.', 'logo-512.png')
-
-if __name__ == '__main__': app.run(host='0.0.0.0', port=10000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=10000)

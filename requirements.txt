@@ -1,6 +1,1 @@
-pyTelegramBotAPI
-requests
-Pillow
-moviepy
-imageio
-imageio-ffmpeg
+Flask==3.0.0
