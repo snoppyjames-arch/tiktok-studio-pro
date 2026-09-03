@@ -6,109 +6,48 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok Studio Pro - SUPER FREE</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+# [Keep your full HTML string here]
 
-body {
-    font-family: 'Inter', Arial, sans-serif;
-    background: #000;
-    color: #fff;
-    padding: 15px 15px 90px 15px;
-    margin: 0;
-}
+@app.route('/')
+def home():
+    return render_template_string(HTML)
 
-.header {
-    text-align: center;
-    margin-bottom: 20px;
-}
+@app.route('/generate', methods=['POST'])
+def generate():
+    data = request.get_json()
+    idea = data.get('idea', 'Funny Crypto Trading')
+    viral_idea = f"Viral TikTok: {idea}"
+    hook = f"Stop scrolling if you want to understand {idea}!"
+    script = f"0-3s: [HOOK] Stop scrolling!\n3-10s: [PROBLEM] Why everyone fails at {idea}...\n10-25s: [SOLUTION] The professional way to fix it...\n25-30s: [CTA] Follow for Part 2!"
+    hashtags = f"#{idea.replace(' ','')} #viral #fyp #foryoupage #trending"
+    best_time = "Today 7–9 PM"
+    
+    p1 = urllib.parse.quote(f"vibrant 3D render illustration of {idea}, trending tiktok style, high contrast, neon aesthetic")
+    p2 = urllib.parse.quote(f"cinematic shot of {idea}, professional dramatic studio lighting, 4k resolution")
+    p3 = urllib.parse.quote(f"bold YouTube and TikTok thumbnail background style representing {idea}, eye-catching colors")
+    
+    image1 = f"https://image.pollinations.ai/prompt/{p1}?width=512&height=350&nologo=true"
+    image2 = f"https://image.pollinations.ai/prompt/{p2}?width=512&height=350&nologo=true"
+    image3 = f"https://image.pollinations.ai/prompt/{p3}?width=512&height=350&nologo=true"
+    
+    audio_text = urllib.parse.quote(f"Attention! Stop scrolling if you want to master {idea}. Watch this right now!")
+    audio_url = f"https://text.pollinations.ai/{audio_text}?model=openai-audio"
 
-.logo-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
+    return jsonify({
+        "viral_idea": viral_idea,
+        "hook": hook,
+        "script": script,
+        "hashtags": hashtags,
+        "best_time": best_time,
+        "image1": image1,
+        "image2": image2,
+        "image3": image3,
+        "audio_url": audio_url
+    })
 
-h1 {
-    color: #fff;
-    font-size: 20px;
-    margin: 0;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.badge-super {
-    border: 1.5px solid #ff0050;
-    color: #ff0050;
-    padding: 2px 8px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 10px rgba(255, 0, 80, 0.4);
-}
-
-.subtitle-container {
-    margin-top: 8px;
-}
-
-.subtitle-main {
-    color: #00f2ea;
-    font-size: 11px;
-    letter-spacing: 1px;
-    font-weight: 700;
-}
-
-.subtitle-desc {
-    color: #888;
-    font-size: 12px;
-    margin-top: 2px;
-}
-
-.input-container {
-    background: #111;
-    border: 1.5px solid #ff0050;
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 0 15px rgba(255, 0, 80, 0.2);
-    margin-bottom: 15px;
-}
-
-.input-box {
-    width: 100%;
-    background: transparent;
-    border: none;
-    font-size: 14px;
-    color: #fff;
-    box-sizing: border-box;
-    outline: none;
-}
-
-.input-box::placeholder {
-    color: #666;
-}
-
-.btn-generate {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(90deg, #ff0050, #00f2ea);
-    border: none;
-    border-radius: 14px;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(255, 0, 80, 0.4);
-    margin-bottom: 20px;
-}
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
 
 .card {
     background: #0a0a0a;
