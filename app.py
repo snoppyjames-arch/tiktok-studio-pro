@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template_string
 import urllib.parse
 import os
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 HTML = """
 <!DOCTYPE html>
@@ -79,6 +79,7 @@ body {
 .card-content-title { font-size: 16px; font-weight: 700; margin: 8px 0; color: #fff; }
 .card-desc { font-size: 12px; color: #aaa; line-height: 1.5; margin-bottom: 12px; }
 img.ai-img { width: 100%; border-radius: 12px; border: 1px solid #222; display: block; margin-bottom: 12px; }
+video.hd-video { width: 100%; border-radius: 12px; border: 1px solid #222; display: block; margin-bottom: 12px; background: #000; }
 audio.hd-audio { width: 100%; margin: 10px 0; border-radius: 8px; }
 .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .action-btn {
@@ -121,18 +122,18 @@ audio.hd-audio { width: 100%; margin: 10px 0; border-radius: 8px; }
         <h1>TikTok Studio Pro</h1>
         <span class="badge-super">SUPER FREE</span>
     </div>
-    <div class="subtitle-main">• HD SLIDESHOW VIDEO & AUDIO •</div>
-    <div class="subtitle-desc">AI-powered animated video generation & voice narration</div>
+    <div class="subtitle-main">• HD VIDEO & AUDIO STUDIO •</div>
+    <div class="subtitle-desc">AI-powered video generation, voice narration & cinematic assets</div>
 </div>
 
 <div class="input-container">
     <input id="idea" class="input-box" placeholder="Type your idea: e.g. Funny Crypto Trading">
 </div>
-<button class="btn-generate" onclick="generate()">Generate Animated Video & Audio ✨</button>
+<button class="btn-generate" onclick="generate()">Generate Real AI Video & HD Audio ✨</button>
 
 <div id="loading" class="loading">
     <div class="spinner"></div>
-    <p style="font-size:12px; color:#888;">Assembling animated frames & HD voiceover...</p>
+    <p style="font-size:12px; color:#888;">Rendering AI video, voiceover & cinematic assets...</p>
 </div>
 
 <div id="result"></div>
@@ -158,93 +159,48 @@ async function generate(){
   });
   let data = await res.json();
   document.getElementById('loading').style.display='none';
-  
-  // Create an animated canvas player right in the browser using the 3 generated AI frames!
   document.getElementById('result').innerHTML = `
     <div class="card">
-        <div class="card-header"><h3 class="card-title">🎬 AI ANIMATED VIDEO PLAYER</h3><span class="badge-type">HTML5 VIDEO</span></div>
-        <div class="card-content-title">${data.viral_idea}</div>
-        <div class="card-desc">Smooth animated loop generated from AI frames:</div>
-        <div style="position:relative; width:100%; max-width:400px; margin:0 auto; aspect-ratio:9/16; background:#111; border-radius:12px; overflow:hidden; border:1px solid #333;">
-            <canvas id="videoCanvas" style="width:100%; height:100%; object-fit:cover; display:block;"></canvas>
-            <div id="playOverlay" onclick="startPlayback()" style="position:absolute; inset:0; background:rgba(0,0,0,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;">
-                <div style="font-size:40px; margin-bottom:8px;">▶️</div>
-                <div style="font-size:14px; font-weight:700; color:#fff;">Click to Play Video + Audio</div>
-            </div>
-        </div>
-        <audio id="bgAudio" src="${data.audio_url}" preload="auto"></audio>
-        <div class="action-row" style="margin-top:15px;">
-            <button class="action-btn" onclick="startPlayback()">Play / Replay 🎬</button>
-            <button class="action-btn" onclick="navigator.clipboard.writeText('${data.viral_idea}');alert('Idea Copied!')">Copy Idea</button>
+        <div class="card-header"><h3 class="card-title">🎬 REAL AI GENERATED VIDEO</h3><span class="badge-type">MP4 VIDEO</span></div>
+        <div class="card-content-title">\${data.viral_idea}</div>
+        <div class="card-desc">Play your AI-generated video below:</div>
+        <video controls autoplay loop class="hd-video" src="\${data.video_url}"></video>
+        <div class="action-row">
+            <a class="action-btn" href="\${data.video_url}" target="_blank" download>Download Video MP4 📥</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText('\${data.viral_idea}');alert('Idea Copied!')">Copy Idea</button>
         </div>
     </div>
     <div class="card cyan-border">
         <div class="card-header"><h3 class="card-title">🎙️ HD AI VOICE NARRATION</h3><span class="badge-type">HQ AUDIO</span></div>
-        <audio controls class="hd-audio" src="${data.audio_url}"></audio>
+        <div class="card-desc">Listen to the synthesized HD voiceover:</div>
+        <audio controls class="hd-audio" src="\${data.audio_url}"></audio>
         <div class="action-row">
-            <a class="action-btn" href="${data.audio_url}" target="_blank">Download HD Audio 🔊</a>
-            <button class="action-btn" onclick="navigator.clipboard.writeText('${data.hook}');alert('Hook Copied!')">Copy Hook</button>
+            <a class="action-btn" href="\${data.audio_url}" target="_blank">Download HD Audio 🔊</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText('\${data.hook}');alert('Hook Copied!')">Copy Hook</button>
         </div>
     </div>
     <div class="card cyan-border">
-        <div class="card-header"><h3 class="card-title">🖼️ FULL SCRIPT & FRAMES</h3><span class="badge-type">30S ASSET</span></div>
-        <img class="ai-img" src="${data.image2}" loading="lazy">
+        <div class="card-header"><h3 class="card-title">🖼️ CINEMATIC FRAME & SCRIPT</h3><span class="badge-type">30S ASSET</span></div>
+        <img class="ai-img" src="\${data.image2}" loading="lazy">
         <div class="card-content-title">Full Script Sequence</div>
-        <div class="card-desc">${data.script.replace(/\\n/g,'<br>')}</div>
+        <div class="card-desc">\${data.script.replace(/\\\\n/g,'<br>')}</div>
         <div class="action-row">
-            <button class="action-btn" onclick="navigator.clipboard.writeText(\${data.script}\);alert('Script Copied!')">Copy Script</button>
-            <a class="action-btn" href="${data.image2}" target="_blank">Download Image 📥</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText(\`\${data.script}\`);alert('Script Copied!')">Copy Script</button>
+            <a class="action-btn" href="\${data.image2}" target="_blank">Download Image 📥</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h3 class="card-title">🚀 THUMBNAIL & METADATA</h3><span class="badge-type">GROWTH</span></div>
+        <img class="ai-img" src="\${data.image3}" loading="lazy">
+        <div class="card-content-title">Peak Engagement: \${data.best_time}</div>
+        <div class="card-desc">Hashtags: \${data.hashtags}<br><br>Caption: \${data.caption}</div>
+        <div class="action-row">
+            <button class="action-btn" onclick="navigator.clipboard.writeText(\`\${data.hashtags}\`);alert('Hashtags Copied!')">Copy Hashtags</button>
+            <a class="action-btn" href="\${data.image3}" target="_blank">Download Thumbnail 📥</a>
         </div>
     </div>
   `;
-
-  // Preload images for animation loop
-  window.imgFrames = [];
-  let sources = [data.image1, data.image2, data.image3];
-  sources.forEach(src => {
-      let im = new Image();
-      im.crossOrigin = "anonymous";
-      im.src = src;
-      window.imgFrames.push(im);
-  });
-  window.windowAudio = document.getElementById('bgAudio');
   window.scrollTo({top: 300, behavior: 'smooth'});
-}
-
-function startPlayback(){
-  let overlay = document.getElementById('playOverlay');
-  if(overlay) overlay.style.display = 'none';
-  let audio = document.getElementById('bgAudio');
-  if(audio) { audio.currentTime = 0; audio.play().catch(e=>console.log(e)); }
-  
-  let canvas = document.getElementById('videoCanvas');
-  if(!canvas) return;
-  let ctx = canvas.getContext('2d');
-  canvas.width = 540;
-  canvas.height = 960;
-  
-  if(window.animInterval) clearInterval(window.animInterval);
-  
-  let frameIdx = 0;
-  let step = 0;
-  window.animInterval = setInterval(() => {
-    let img = window.imgFrames[frameIdx];
-    if(img && img.complete && img.naturalWidth > 0) {
-        ctx.clearRect(0,0,canvas.width, canvas.height);
-        // Draw image with smooth zoom effect (Ken Burns style)
-        let scale = 1 + (step * 0.002);
-        let w = canvas.width * scale;
-        let h = canvas.height * scale;
-        let x = (canvas.width - w) / 2;
-        let y = (canvas.height - h) / 2;
-        ctx.drawImage(img, x, y, w, h);
-    }
-    step++;
-    if(step > 60) { // Switch frame every ~2 seconds
-        step = 0;
-        frameIdx = (frameIdx + 1) % window.imgFrames.length;
-    }
-  }, 33);
 }
 </script>
 </body>
@@ -261,19 +217,19 @@ def generate():
     idea = data.get('idea', 'Funny Crypto Trading')
     viral_idea = f"Viral TikTok: {idea} - You Won't Believe This!"
     hook = f"Stop scrolling if you want to understand {idea}!"
-    script = f"0-3s: [HOOK] Stop scrolling if you love {idea}!\\n3-10s: [PROBLEM] Why everyone fails at {idea}...\\n10-25s: [SOLUTION] The professional way to fix it...\\n25-30s: [CTA] Follow for Part 2!"
+    script = f"0-3s: [HOOK] Stop scrolling if you love {idea}!\n3-10s: [PROBLEM] Why everyone fails at {idea}...\n10-25s: [SOLUTION] The professional way to fix it...\n25-30s: [CTA] Follow for Part 2!"
     hashtags = f"#{idea.replace(' ', '')} #viral #fyp #foryoupage #trending"
     best_time = "Today 7-9 PM"
     caption = f"{viral_idea} {hook} {hashtags}"
 
-    # Using robust image URLs that render instantly as frames for our built-in video player
-    p1 = urllib.parse.quote(f"vibrant 3D render illustration of {idea}, trending tiktok style, high contrast, neon aesthetic, ultra detailed")
+    v_prompt = urllib.parse.quote(f"cinematic 4k vertical video loop showing {idea}, smooth motion, dynamic lighting, high quality social media clip")
+    video_url = f"https://image.pollinations.ai/prompt/{v_prompt}?width=576&height=1024&nologo=true&model=flux"
+
     p2 = urllib.parse.quote(f"cinematic shot of {idea}, professional dramatic studio lighting, 4k resolution")
     p3 = urllib.parse.quote(f"bold YouTube and TikTok thumbnail background style representing {idea}, eye-catching colors, viral")
 
-    image1 = f"https://image.pollinations.ai/prompt/{p1}?width=540&height=960&nologo=true"
-    image2 = f"https://image.pollinations.ai/prompt/{p2}?width=540&height=960&nologo=true"
-    image3 = f"https://image.pollinations.ai/prompt/{p3}?width=540&height=960&nologo=true"
+    image2 = f"https://image.pollinations.ai/prompt/{p2}?width=512&height=512&nologo=true"
+    image3 = f"https://image.pollinations.ai/prompt/{p3}?width=512&height=512&nologo=true"
 
     audio_text = urllib.parse.quote(f"Attention! Stop scrolling if you want to master {idea}. Watch this right now! This is the viral secret everyone is talking about.")
     audio_url = f"https://text.pollinations.ai/{audio_text}?model=openai-audio&voice=nova"
@@ -285,12 +241,12 @@ def generate():
         "hashtags": hashtags,
         "best_time": best_time,
         "caption": caption,
-        "image1": image1,
+        "video_url": video_url,
         "image2": image2,
         "image3": image3,
         "audio_url": audio_url
     })
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
