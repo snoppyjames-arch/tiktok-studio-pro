@@ -1,39 +1,14 @@
 from flask import Flask, request, jsonify, render_template_string, send_file
 import urllib.parse, os, random
-from PIL import Image, ImageDraw
-import io
 
 app = Flask(__name__)
 
-# GENERATE ICON ON THE FLY - Logo 3 SP Style
-def create_icon():
-    img = Image.new('RGBA', (512, 512), (0, 0, 0, 255))
-    draw = ImageDraw.Draw(img)
-    # Rounded rect background
-    draw.rounded_rectangle([20, 20, 492, 492], radius=80, fill=(20,20,20,255), outline=(40,40,40,255), width=2)
-    # SP gradient effect - pink to cyan
-    # S shape
-    draw.line([(135, 145), (395, 145)], fill=(255, 50, 150), width=28, joint="curve")
-    # We'll draw stylized SP using text for simplicity that looks like logo 3
-    try:
-        # Use thick lines to mimic SP
-        draw.line([(130, 160), (380, 80)], fill=(0,242,234), width=35)
-        draw.arc([80, 190, 380, 380], 0, 180, fill=(255,0,128), width=28)
-        draw.arc([120, 300, 380, 500], 180, 360, fill=(0,242,234), width=28)
-        draw.line([(260, 340), (260, 440)], fill=(200,200,200), width=28)
-    except:
-        pass
-    # Add SP text with gradient look
-    draw.text((140, 180), "SP", fill=(255, 0, 128), font_size=220)
-    return img
-
-HTML = """
-<!DOCTYPE html>
+HTML = """<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Studio Pro - Video Maker</title>
+<title>Reels Studio Pro - Video Maker</title>
 <link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/icon.png">
 <meta name="theme-color" content="#ff0050">
+<link rel="icon" href="/icon-512.png">
 <style>
 *{box-sizing:border-box}body{background:#000;color:#fff;font-family:-apple-system,sans-serif;margin:0;padding:0 15px 100px 15px}
 .header{text-align:center;padding:20px 0 10px;border-bottom:1px solid #222}
@@ -46,7 +21,7 @@ video,img{width:100%;border-radius:12px;background:#000;min-height:250px}
 .progress{width:100%;height:6px;background:#222;border-radius:10px;overflow:hidden;margin:10px 0}
 .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff0050,#00f2ea);transition:width 0.2s}
 </style></head><body>
-<div class="header"><h1>Studio Pro <span class="badge-super">PRO V3</span></h1><p style="color:#00f2ea;font-size:11px">RELIABLE HTML5 CANVAS GENERATOR</p></div>
+<div class="header"><h1>Reels Studio Pro <span class="badge-super">PRO</span></h1><p style="color:#00f2ea;font-size:11px">MAKE YOUR VIDEOS PRO FOR SOCIAL MEDIA</p></div>
 <input id="idea" style="width:100%;background:#111;border:1.5px solid #333;border-radius:14px;padding:16px;color:#fff;font-size:15px" placeholder="e.g. Crypto Trading Secrets">
 <button class="btn-generate" onclick="generateFull()">Generate Video MP4 🎬</button>
 <div id="loading" style="display:none;text-align:center;padding:20px"><div style="border:3px solid #222;border-top:3px solid #ff0050;border-radius:50%;width:35px;height:35px;animation:spin 1s linear infinite;margin:auto"></div><p>Assembling video frames & voice...</p><div class="progress"><div id="bar" class="progress-bar"></div></div></div>
@@ -69,10 +44,9 @@ async function generateFull(){
    <div class="card"><div class="card-title">✅ SUCCESS - VIDEO READY</div>
    <video controls autoplay loop src="${mp4Url}" style="border:2px solid #00f2ea"></video>
    <p style="font-size:12px;color:#aaa"><b>${aiData.viral_idea}</b><br><br>${aiData.script.replace(/\\n/g,'<br>')}</p>
-   <a href="${mp4Url}" download="tiktok-video-${Date.now()}.webm" style="display:block;background:#ff0050;color:#fff;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:800;margin-top:10px">Download MP4/WebM 📥</a>
+   <a href="${mp4Url}" download="reels-video-${Date.now()}.webm" style="display:block;background:#ff0050;color:#fff;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:800;margin-top:10px">Download MP4/WebM 📥</a>
    </div>
    <div class="card"><div class="card-title">🎙️ AI NARRATION AUDIO</div><audio controls src="${aiData.audio_url}" style="width:100%"></audio></div>
-   <div class="card"><div class="card-title">📦 ASSETS</div><img src="${aiData.image1}"><img src="${aiData.image2}" style="margin-top:8px"></div>
  `;
 }
 function loadImg(src){return new Promise((res)=>{let i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=()=>{let f=new Image();f.src='https://picsum.photos/576/1024';f.onload=()=>res(f);};i.src=src;})}
@@ -89,17 +63,20 @@ async function buildMp4(images){
     let img=images[idx]; ctx.fillStyle='#000'; ctx.fillRect(0,0,576,1024);
     ctx.drawImage(img,0,0,576,1024);
     let captionText = "";
-    if (frame < 90) { captionText = aiData.viral_idea; } else if (frame < 180) { captionText = "CORE VALUE REVELATION"; } else { captionText = "CALL TO ACTION - FOLLOW!"; }
+    if (frame < 90) { captionText = aiData.viral_idea; }
+    else if (frame < 180) { captionText = "PRO EDIT REVEALED"; }
+    else { captionText = "FOLLOW FOR MORE!"; }
     ctx.save();
     ctx.font = '900 26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     let textWidth = ctx.measureText(captionText).width;
     let boxWidth = Math.min(textWidth + 50, 520); let boxHeight = 60;
     let boxX = (576 - boxWidth) / 2; let boxY = 780;
-    ctx.fillStyle = 'rgba(168, 85, 247, 0.95)';
-    ctx.beginPath(); if (ctx.roundRect) { ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 14); } else { ctx.rect(boxX, boxY, boxWidth, boxHeight); } ctx.fill();
-    ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,0,80,0.95)'; ctx.beginPath();
+    if (ctx.roundRect) { ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 14); } else { ctx.rect(boxX, boxY, boxWidth, boxHeight); }
+    ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.fillStyle = '#ffffff'; ctx.fillText(captionText, 576 / 2, boxY + boxHeight / 2);
-    ctx.font = 'bold 16px sans-serif'; ctx.fillStyle = '#00f2ea'; ctx.fillText(aiData.hashtags, 576 / 2, boxY + boxHeight + 35);
+    ctx.font = 'bold 16px sans-serif'; ctx.fillStyle = '#00f2ea';
+    ctx.fillText(aiData.hashtags, 576 / 2, boxY + boxHeight + 35);
     ctx.restore();
     frame++; if(frame>=total){clearInterval(interval); recorder.stop();}
   },1000/30);
@@ -112,40 +89,42 @@ async function buildMp4(images){
 def home():
     return render_template_string(HTML)
 
-@app.route('/icon.png')
 @app.route('/icon-512.png')
-def icon_png():
-    img = create_icon()
-    buf = io.BytesIO()
-    img.save(buf, format='PNG')
-    buf.seek(0)
-    return send_file(buf, mimetype='image/png')
+def icon():
+    # Serve the new R logo - put icon-512.png in same folder on Render
+    if os.path.exists("icon-512.png"):
+        return send_file("icon-512.png", mimetype="image/png")
+    # fallback to neon_r_icon.webp if you upload that
+    if os.path.exists("neon_r_icon.webp"):
+        return send_file("neon_r_icon.webp", mimetype="image/webp")
+    # fallback external
+    return "", 302, {"Location": "https://cdn-icons-png.flaticon.com/512/3046/3046120.png"}
 
 @app.route('/manifest.json')
 def manifest():
     return jsonify({
-        "name": "Studio Pro - Video Maker",
-        "short_name": "Studio Pro",
-        "description": "Professional Video Generator for Viral Content - Studio Pro",
+        "name": "Reels Studio Pro",
+        "short_name": "Reels Studio Pro",
+        "description": "Make your videos editing pro for social media platforms - Reels, TikTok, Shorts",
         "start_url": "/",
         "display": "standalone",
         "background_color": "#000000",
         "theme_color": "#ff0050",
         "icons": [
-            {"src": "/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
-            {"src": "/icon.png", "sizes": "192x192", "type": "image/png"}
+            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+            {"src": "/icon-512.png", "sizes": "192x192", "type": "image/png", "purpose": "any"}
         ]
     })
 
 @app.route('/generate', methods=['POST'])
 def generate():
     data = request.get_json()
-    idea = data.get('idea','Crypto Trading')[:50]
+    idea = data.get('idea','Reels Editing')[:50]
     seed = random.randint(1,9999)
     p = lambda txt: urllib.parse.quote(txt)
     viral_idea = f"Stop scrolling! The truth about {idea}"
-    hashtags = f"#{idea.replace(' ','')} #viral #fyp #trending"
-    script = f"0-3s: Hook about {idea}\\n3-6s: Core value revelation\\n6-8s: Call to action"
+    hashtags = f"#{idea.replace(' ','')} #reels #viral #fyp"
+    script = f"0-3s: Hook about {idea}\n3-6s: Core value revelation\n6-8s: Call to action"
     base = "https://image.pollinations.ai/prompt"
     img1 = f"{base}/{p(idea+', vertical cinematic portrait')}?width=576&height=1024&nologo=true&seed={seed}"
     img2 = f"{base}/{p(idea+', neon lighting 4k vertical')}?width=576&height=1024&nologo=true&seed={seed+1}"
