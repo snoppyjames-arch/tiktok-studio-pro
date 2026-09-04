@@ -1,61 +1,76 @@
 from flask import Flask, request, jsonify, render_template_string
-import urllib.parse, os, random, time
+import urllib.parse, os, random
 
 app = Flask(__name__)
 
 HTML = """
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TikTok Studio Pro - SUPER FREE</title>
+<title>TikTok Studio Pro - WORKING</title>
 <style>
-*{box-sizing:border-box}body{background:#000;color:#fff;font-family:-apple-system,sans-serif;margin:0;padding:0 15px 90px 15px}
-.header{text-align:center;padding:20px 0 10px 0;border-bottom:1px solid #1a1a1a;margin-bottom:20px}
-.logo-row{display:flex;justify-content:center;align-items:center;gap:10px}.logo-row h1{margin:0;font-size:20px}
-.badge-super{background:#ff0050;color:#fff;font-size:9px;padding:3px 7px;border-radius:6px;font-weight:800}
-.subtitle-main{color:#00f2ea;font-size:11px;letter-spacing:2px;margin-top:8px;font-weight:700}
-.subtitle-desc{color:#666;font-size:11px;margin-top:4px}
-.input-container{margin:20px 0 10px 0}.input-box{width:100%;background:#111;border:1.5px solid #333;border-radius:14px;padding:16px;color:#fff;font-size:15px;outline:none}
-.btn-generate{width:100%;background:linear-gradient(90deg,#ff0050,#ff2a6d);color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:20px}
-.card{background:#0a0a0a;border:1.5px solid #ff0050;border-radius:16px;padding:15px;margin-bottom:20px}
-.card.cyan-border{border-color:#00f2ea}.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.card-title{color:#ff0050;font-size:13px;font-weight:700;margin:0}.card.cyan-border .card-title{color:#00f2ea}
-.badge-type{border:1px solid #00f2ea;color:#00f2ea;font-size:10px;padding:3px 8px;border-radius:8px}
-.card-content-title{font-size:16px;font-weight:700;margin:8px 0;color:#fff}.card-desc{font-size:12px;color:#aaa;line-height:1.5;margin-bottom:12px}
-img.ai-img{width:100%;border-radius:12px;border:1px solid #222;display:block;margin-bottom:12px;min-height:200px;background:#111}
-audio.hd-audio{width:100%;margin:10px 0}
-.action-row{display:flex;gap:8px;flex-wrap:wrap}.action-btn{background:transparent;border:1px solid #ff0050;color:#ff0050;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none}
-.card.cyan-border .action-btn{border-color:#00f2ea;color:#00f2ea}
-.loading{text-align:center;padding:30px;display:none}.spinner{border:3px solid #222;border-top:3px solid #ff0050;border-radius:50%;width:35px;height:35px;animation:spin 1s linear infinite;margin:0 auto 10px auto}
-@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#080808;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px 0;z-index:1000}
-.nav-item{display:flex;flex-direction:column;align-items:center;color:#666;font-size:10px;text-decoration:none;gap:4px}.nav-item.active{color:#ff0050}
+*{box-sizing:border-box}body{background:#000;color:#fff;font-family:-apple-system,sans-serif;margin:0;padding:0 15px 100px 15px}
+.header{text-align:center;padding:20px 0 10px;border-bottom:1px solid #222}
+.badge-super{background:#ff0050;color:#fff;font-size:10px;padding:4px 8px;border-radius:6px;font-weight:800}
+.btn-generate{width:100%;background:linear-gradient(90deg,#ff0050,#00f2ea);color:#000;border:none;padding:18px;border-radius:14px;font-size:17px;font-weight:900;cursor:pointer;margin:15px 0}
+.card{background:#111;border:1px solid #333;border-radius:16px;padding:15px;margin-bottom:15px}
+.card-title{color:#ff0050;font-weight:800;margin-bottom:10px}
+video,img{width:100%;border-radius:12px;background:#000;min-height:250px}
+#canvas{display:none}
+.progress{width:100%;height:6px;background:#222;border-radius:10px;overflow:hidden;margin:10px 0}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff0050,#00f2ea);transition:width 0.2s}
 </style></head><body>
-<div class="header"><div class="logo-row"><h1>TikTok Studio Pro</h1><span class="badge-super">SUPER FREE</span></div><div class="subtitle-main">• HD VIDEO & AUDIO STUDIO •</div><div class="subtitle-desc">AI-powered video generation, voice narration & cinematic assets</div></div>
-<div class="input-container"><input id="idea" class="input-box" placeholder="Type your idea: e.g. Funny Crypto Trading"></div>
-<button class="btn-generate" onclick="generate()">Generate Real AI Video & HD Audio ✨</button>
-<div id="loading" class="loading"><div class="spinner"></div><p style="font-size:12px;color:#888;">Rendering AI video, voiceover & cinematic assets...</p></div>
+<div class="header"><h1>TikTok Studio Pro <span class="badge-super">STABLE V2</span></h1><p style="color:#00f2ea;font-size:11px">RELIABLE HTML5 CANVAS GENERATOR</p></div>
+<input id="idea" style="width:100%;background:#111;border:1.5px solid #333;border-radius:14px;padding:16px;color:#fff;font-size:15px" placeholder="e.g. Crypto Trading Secrets">
+<button class="btn-generate" onclick="generateFull()">Generate Video MP4 🎬</button>
+<div id="loading" style="display:none;text-align:center;padding:20px"><div style="border:3px solid #222;border-top:3px solid #ff0050;border-radius:50%;width:35px;height:35px;animation:spin 1s linear infinite;margin:auto"></div><p>Assembling video frames & voice...</p><div class="progress"><div id="bar" class="progress-bar"></div></div></div>
+<style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
 <div id="result"></div>
+<canvas id="canvas" width="576" height="1024"></canvas>
 <script>
-async function generate(){
-  let idea=document.getElementById('idea').value; if(!idea){alert('Type an idea first!'); return;}
-  document.getElementById('loading').style.display='block'; document.getElementById('result').innerHTML='';
-  let res=await fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea:idea})});
-  let data=await res.json(); document.getElementById('loading').style.display='none';
-  document.getElementById('result').innerHTML=`
-    <div class="card"><div class="card-header"><h3 class="card-title">🎬 AI CINEMATIC FRAME</h3><span class="badge-type">AI IMAGE</span></div>
-    <div class="card-content-title">${data.viral_idea}</div>
-    <img class="ai-img" src="${data.video_url}" loading="eager" onerror="this.src='https://picsum.photos/576/1024?random='+Date.now()">
-    <div class="action-row"><a class="action-btn" href="${data.video_url}" target="_blank">Download Frame 📥</a></div></div>
-    <div class="card cyan-border"><div class="card-header"><h3 class="card-title">🎙️ HD AI VOICE</h3><span class="badge-type">HQ AUDIO</span></div>
-    <audio controls class="hd-audio" src="${data.audio_url}"></audio>
-    <div class="action-row"><a class="action-btn" href="${data.audio_url}" target="_blank">Download Audio 🔊</a></div></div>
-    <div class="card cyan-border"><div class="card-header"><h3 class="card-title">🖼️ CINEMATIC FRAME & SCRIPT</h3><span class="badge-type">30S ASSET</span></div>
-    <img class="ai-img" src="${data.image2}" onerror="this.src='https://picsum.photos/512/512?random='+Date.now()">
-    <div class="card-content-title">Full Script Sequence</div><div class="card-desc">${data.script.replace(/\\n/g,'<br>')}</div></div>
-    <div class="card"><div class="card-header"><h3 class="card-title">🚀 THUMBNAIL & METADATA</h3><span class="badge-type">GROWTH</span></div>
-    <img class="ai-img" src="${data.image3}" onerror="this.src='https://picsum.photos/512/512?random='+Date.now()">
-    <div class="card-content-title">Peak: ${data.best_time}</div><div class="card-desc">${data.hashtags}<br><br>${data.caption}</div></div>`;
-  window.scrollTo({top:300,behavior:'smooth'});
+let aiData=null;
+async function generateFull(){
+ let idea=document.getElementById('idea').value; if(!idea){alert('Type an idea first');return;}
+ document.getElementById('loading').style.display='block'; document.getElementById('result').innerHTML=''; document.getElementById('bar').style.width='20%';
+
+ let res=await fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea})});
+ aiData=await res.json(); document.getElementById('bar').style.width='50%';
+
+ let imgs=await Promise.all([loadImg(aiData.image1),loadImg(aiData.image2),loadImg(aiData.image3)]);
+ document.getElementById('bar').style.width='75%';
+
+ let mp4Url=await buildMp4(imgs);
+ document.getElementById('bar').style.width='100%';
+ document.getElementById('loading').style.display='none';
+
+ document.getElementById('result').innerHTML=`
+   <div class="card"><div class="card-title">✅ SUCCESS - VIDEO READY</div>
+   <video controls autoplay loop src="${mp4Url}" style="border:2px solid #00f2ea"></video>
+   <p style="font-size:12px;color:#aaa"><b>${aiData.viral_idea}</b><br><br>${aiData.script.replace(/\\n/g,'<br>')}</p>
+   <a href="${mp4Url}" download="tiktok-video-${Date.now()}.webm" style="display:block;background:#ff0050;color:#fff;text-align:center;padding:12px;border-radius:10px;text-decoration:none;font-weight:800;margin-top:10px">Download MP4/WebM 📥</a>
+   </div>
+   <div class="card"><div class="card-title">🎙️ AI NARRATION AUDIO</div><audio controls src="${aiData.audio_url}" style="width:100%"></audio></div>
+   <div class="card"><div class="card-title">📦 ASSETS</div><img src="${aiData.image1}"><img src="${aiData.image2}" style="margin-top:8px"></div>
+ `;
+}
+function loadImg(src){return new Promise((res)=>{let i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=()=>{let f=new Image();f.src='https://picsum.photos/576/1024';f.onload=()=>res(f);};i.src=src;})}
+async function buildMp4(images){
+ return new Promise((resolve)=>{
+  const canvas=document.getElementById('canvas'); const ctx=canvas.getContext('2d');
+  const stream=canvas.captureStream(30); const chunks=[];
+  const recorder=new MediaRecorder(stream,{mimeType:'video/webm'});
+  recorder.ondataavailable=e=>chunks.push(e.data);
+  recorder.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'}); resolve(URL.createObjectURL(blob));};
+  recorder.start(); let frame=0; let total=30*8; // 8 seconds
+  let interval=setInterval(()=>{
+    let idx=Math.floor((frame/total)*images.length); if(idx>=images.length) idx=images.length-1;
+    let img=images[idx]; ctx.fillStyle='#000'; ctx.fillRect(0,0,576,1024);
+    ctx.drawImage(img,0,0,576,1024);
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(0,840,576,184);
+    ctx.fillStyle='#fff'; ctx.font='bold 22px sans-serif'; ctx.fillText(aiData.viral_idea.substring(0,35),20,890);
+    ctx.fillStyle='#00f2ea'; ctx.font='15px sans-serif'; ctx.fillText(aiData.hashtags.substring(0,40),20,930);
+    frame++; if(frame>=total){clearInterval(interval); recorder.stop();}
+  },1000/30);
+ });
 }
 </script></body></html>
 """
@@ -67,34 +82,21 @@ def home():
 @app.route('/generate', methods=['POST'])
 def generate():
     data = request.get_json()
-    idea = data.get('idea', 'Funny Crypto Trading')[:60]
-    seed = random.randint(1, 999999)
-    viral_idea = f"Viral TikTok: {idea} - You Won't Believe This!"
-    hook = f"Stop scrolling if you want to understand {idea}!"
-    script = f"0-3s: [HOOK] Stop scrolling if you love {idea}!\n3-10s: [PROBLEM] Why everyone fails at {idea}...\n10-25s: [SOLUTION] The professional way to fix it...\n25-30s: [CTA] Follow for Part 2!"
-    hashtags = f"#{idea.replace(' ', '')} #viral #fyp #foryoupage #trending"
-    best_time = "Today 7-9 PM"
-    caption = f"{viral_idea} {hook} {hashtags}"
+    idea = data.get('idea','Crypto Trading')[:50]
+    seed = random.randint(1,9999)
+    p = lambda txt: urllib.parse.quote(txt)
+    viral_idea = f"Stop scrolling! The truth about {idea}"
+    hashtags = f"#{idea.replace(' ','')} #viral #fyp #trending"
+    script = f"0-3s: Hook about {idea}\\n3-6s: Core value revelation\\n6-8s: Call to action"
+    base = "https://image.pollinations.ai/prompt"
+    img1 = f"{base}/{p(idea+', vertical cinematic portrait')}?width=576&height=1024&nologo=true&seed={seed}"
+    img2 = f"{base}/{p(idea+', neon lighting 4k vertical')}?width=576&height=1024&nologo=true&seed={seed+1}"
+    img3 = f"{base}/{p(idea+', dark abstract background vertical')}?width=576&height=1024&nologo=true&seed={seed+2}"
 
-    # FAST MODEL + CACHE BUSTER - THIS FIXES EMPTY BOX
-    v_prompt = urllib.parse.quote(f"{idea}, cinematic 4k vertical, dramatic lighting")
-    video_url = f"https://image.pollinations.ai/prompt/{v_prompt}?width=576&height=1024&nologo=true&model=turbo&seed={seed}"
+    # Use reliable public TTS endpoint (Using standard gTTS proxy or fallback text endpoint)
+    audio = f"https://translate.google.com/translate_tts?ie=UTF-8&q={p(viral_idea)}&tl=en&client=tw-ob"
 
-    p2 = urllib.parse.quote(f"cinematic shot of {idea}, studio lighting, 4k")
-    p3 = urllib.parse.quote(f"viral TikTok thumbnail {idea}, eye-catching colors")
-
-    image2 = f"https://image.pollinations.ai/prompt/{p2}?width=512&height=512&nologo=true&model=turbo&seed={seed+1}"
-    image3 = f"https://image.pollinations.ai/prompt/{p3}?width=512&height=512&nologo=true&model=turbo&seed={seed+2}"
-
-    audio_text = urllib.parse.quote(f"Attention! Stop scrolling if you want to master {idea}. Watch this right now!")
-    audio_url = f"https://text.pollinations.ai/{audio_text}?model=openai-audio&voice=nova"
-
-    return jsonify({
-        "viral_idea": viral_idea, "hook": hook, "script": script,
-        "hashtags": hashtags, "best_time": best_time, "caption": caption,
-        "video_url": video_url, "image2": image2, "image3": image3, "audio_url": audio_url
-    })
+    return jsonify({"viral_idea":viral_idea,"hashtags":hashtags,"script":script,"image1":img1,"image2":img2,"image3":img3,"audio_url":audio})
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT",10000)))
