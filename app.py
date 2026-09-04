@@ -13,63 +13,18 @@ HTML = """
 <title>TikTok Studio Pro - SUPER FREE</title>
 <style>
 * { box-sizing: border-box; }
-body {
-    background: #000;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    margin: 0;
-    padding: 0 15px 90px 15px;
-}
-.header {
-    text-align: center;
-    padding: 20px 0 10px 0;
-    border-bottom: 1px solid #1a1a1a;
-    margin-bottom: 20px;
-}
+body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0 15px 90px 15px; }
+.header { text-align: center; padding: 20px 0 10px 0; border-bottom: 1px solid #1a1a1a; margin-bottom: 20px; }
 .logo-row { display: flex; justify-content: center; align-items: center; gap: 10px; }
 .logo-row h1 { margin: 0; font-size: 20px; display: flex; align-items: center; gap: 8px; }
-.badge-super {
-    background: #ff0050;
-    color: #fff;
-    font-size: 9px;
-    padding: 3px 7px;
-    border-radius: 6px;
-    font-weight: 800;
-}
+.badge-super { background: #ff0050; color: #fff; font-size: 9px; padding: 3px 7px; border-radius: 6px; font-weight: 800; }
 .subtitle-main { color: #00f2ea; font-size: 11px; letter-spacing: 2px; margin-top: 8px; font-weight: 700; }
 .subtitle-desc { color: #666; font-size: 11px; margin-top: 4px; }
 .input-container { margin: 20px 0 10px 0; }
-.input-box {
-    width: 100%;
-    background: #111;
-    border: 1.5px solid #333;
-    border-radius: 14px;
-    padding: 16px;
-    color: #fff;
-    font-size: 15px;
-    outline: none;
-}
+.input-box { width: 100%; background: #111; border: 1.5px solid #333; border-radius: 14px; padding: 16px; color: #fff; font-size: 15px; outline: none; }
 .input-box:focus { border-color: #ff0050; }
-.btn-generate {
-    width: 100%;
-    background: linear-gradient(90deg, #ff0050, #ff2a6d);
-    color: #fff;
-    border: none;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 800;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
-.card {
-    background: #0a0a0a;
-    border: 1.5px solid #ff0050;
-    border-radius: 16px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 12px rgba(255, 0, 80, 0.15);
-}
+.btn-generate { width: 100%; background: linear-gradient(90deg, #ff0050, #ff2a6d); color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 800; cursor: pointer; margin-bottom: 20px; }
+.card { background: #0a0a0a; border: 1.5px solid #ff0050; border-radius: 16px; padding: 15px; margin-bottom: 20px; box-shadow: 0 0 12px rgba(255, 0, 80, 0.15); }
 .card.cyan-border { border-color: #00f2ea; box-shadow: 0 0 12px rgba(0, 242, 234, 0.15); }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .card-title { color: #ff0050; font-size: 13px; font-weight: 700; margin: 0; }
@@ -81,34 +36,12 @@ img.ai-img { width: 100%; border-radius: 12px; border: 1px solid #222; display: 
 video.hd-video { width: 100%; border-radius: 12px; border: 1px solid #222; display: block; margin-bottom: 12px; background: #000; }
 audio.hd-audio { width: 100%; margin: 10px 0; border-radius: 8px; }
 .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.action-btn {
-    background: transparent;
-    border: 1px solid #ff0050;
-    color: #ff0050;
-    padding: 7px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-}
+.action-btn { background: transparent; border: 1px solid #ff0050; color: #ff0050; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; }
 .card.cyan-border .action-btn { border-color: #00f2ea; color: #00f2ea; }
 .loading { text-align: center; padding: 30px; display: none; }
-.spinner {
-    border: 3px solid #222;
-    border-top: 3px solid #ff0050;
-    border-radius: 50%;
-    width: 35px; height: 35px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 10px auto;
-}
+.spinner { border: 3px solid #222; border-top: 3px solid #ff0050; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin: 0 auto 10px auto; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-.bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: #080808; border-top: 1px solid #222;
-    display: flex; justify-content: space-around;
-    padding: 10px 0; z-index: 1000;
-}
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #080808; border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
 .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 10px; text-decoration: none; gap: 4px; }
 .nav-item.active { color: #ff0050; }
 .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
@@ -160,12 +93,12 @@ async function generate(){
   document.getElementById('loading').style.display='none';
   document.getElementById('result').innerHTML = `
     <div class="card">
-        <div class="card-header"><h3 class="card-title">🎬 REAL AI GENERATED VIDEO</h3><span class="badge-type">MP4 VIDEO</span></div>
+        <div class="card-header"><h3 class="card-title">🎬 REAL AI GENERATED VIDEO</h3><span class="badge-type">AI IMAGE</span></div>
         <div class="card-content-title">${data.viral_idea}</div>
-        <div class="card-desc">Play your AI-generated video below:</div>
-        <video controls autoplay loop class="hd-video" src="${data.video_url}"></video>
+        <div class="card-desc">Your AI cinematic frame (Pollinations returns JPG, not MP4 — so we show it as high-res image to avoid MIME error):</div>
+        <img class="ai-img" src="${data.video_url}" loading="lazy">
         <div class="action-row">
-            <a class="action-btn" href="${data.video_url}" target="_blank" download>Download Video MP4 📥</a>
+            <a class="action-btn" href="${data.video_url}" target="_blank" download>Download AI Frame 📥</a>
             <button class="action-btn" onclick="navigator.clipboard.writeText('${data.viral_idea}');alert('Idea Copied!')">Copy Idea</button>
         </div>
     </div>
