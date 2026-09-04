@@ -640,30 +640,29 @@ def home():
 def generate():
     data = request.get_json()
     idea = data.get('idea', 'Neon Sneaker Review')
-    viral_idea = f"{idea} Trends"
+      viral_idea = f"{idea} Trends"
     hook = f"You won't believe how this {idea} performs..."
-    script = f"0-3s: [HOOK] Stop scrolling if you love {idea}\\n3-10s: [PROBLEM] Why most fail...\\n10-25s: [SOLUTION] The exact method...\\n25-30s: [CTA] Follow for updates!"
-    hashtags = f"#{idea.replace(' ','')} #viral #fyp #foryou"
-    best_time = "Today 7–9pm"
+    script = f"0-3s: [HOOK] Stop scrolling if you love {idea}!\n3-10s: [MAIN]"
+    hashtags = f"#{idea.replace(' ', '')} #viral #fyp #foryou"
+    best_time = "Today 7-9pm"
     caption = f"{viral_idea} {hook} {hashtags}"
-    p1 = urllib.parse.quote(f"3d render of {idea}, funny, viral tiktok style, bright colors")
-    p2 = urllib.parse.quote(f"cinematic photo of {idea}, dramatic lighting
-, professional")
-p3 = urllib.parse.quote(f"thumbnail style, bold text {idea}, viral, colorful")
-image1 = f"https://image.pollinations.ai/prompt/{p1}?width=512&height=350&nologo=true"
-image2 = f"https://image.pollinations.ai/prompt/{p2}?width=512&height=350&nologo=true"
-image3 = f"https://image.pollinations.ai/prompt/{p3}?width=512&height=350&nologo=true"
-return jsonify({
-    "viral_idea": viral_idea,
-    "hook": hook,
-    "script": script,
-    "hashtags": hashtags,
-    "best_time": best_time,
-    "caption": caption,
-    "image1": image1,
-    "image2": image2,
-    "image3": image3
-})
+    p1 = urllib.parse.quote(f"3d render of {idea}, funny, viral tiktok style")
+    p2 = urllib.parse.quote(f"cinematic photo of {idea}, dramatic lighting, professional")
+    p3 = urllib.parse.quote(f"thumbnail style, bold text {idea}, viral, colorful")
+    image1 = f"https://image.pollinations.ai/prompt/{p1}?width=512&height=350&nologo=true"
+    image2 = f"https://image.pollinations.ai/prompt/{p2}?width=512&height=350&nologo=true"
+    image3 = f"https://image.pollinations.ai/prompt/{p3}?width=512&height=350&nologo=true"
+    return jsonify({
+        "viral_idea": viral_idea,
+        "hook": hook,
+        "script": script,
+        "hashtags": hashtags,
+        "best_time": best_time,
+        "caption": caption,
+        "image1": image1,
+        "image2": image2,
+        "image3": image3
+    })
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
