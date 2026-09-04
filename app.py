@@ -7,6 +7,8 @@ HTML = """
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TikTok Studio Pro - WORKING</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ff0050">
 <style>
 *{box-sizing:border-box}body{background:#000;color:#fff;font-family:-apple-system,sans-serif;margin:0;padding:0 15px 100px 15px}
 .header{text-align:center;padding:20px 0 10px;border-bottom:1px solid #222}
@@ -60,13 +62,11 @@ async function buildMp4(images){
   const recorder=new MediaRecorder(stream,{mimeType:'video/webm'});
   recorder.ondataavailable=e=>chunks.push(e.data);
   recorder.onstop=()=>{let blob=new Blob(chunks,{type:'video/webm'}); resolve(URL.createObjectURL(blob));};
-  recorder.start(); let frame=0; let total=30*8; // 8 seconds
+  recorder.start(); let frame=0; let total=30*8;
   let interval=setInterval(()=>{
     let idx=Math.floor((frame/total)*images.length); if(idx>=images.length) idx=images.length-1;
     let img=images[idx]; ctx.fillStyle='#000'; ctx.fillRect(0,0,576,1024);
     ctx.drawImage(img,0,0,576,1024);
-
-    // Dynamic TikTok Caption Box Style Simulation
     let captionText = "";
     if (frame < 90) {
       captionText = aiData.viral_idea;
@@ -75,19 +75,15 @@ async function buildMp4(images){
     } else {
       captionText = "CALL TO ACTION - FOLLOW!";
     }
-
     ctx.save();
     ctx.font = '900 26px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
     let textWidth = ctx.measureText(captionText).width;
     let boxWidth = Math.min(textWidth + 50, 520);
     let boxHeight = 60;
     let boxX = (576 - boxWidth) / 2;
     let boxY = 780;
-
-    // Draw CapCut-style purple/magenta background pill box with border
     ctx.fillStyle = 'rgba(168, 85, 247, 0.95)';
     ctx.beginPath();
     if (ctx.roundRect) {
@@ -99,18 +95,12 @@ async function buildMp4(images){
     ctx.lineWidth = 3;
     ctx.strokeStyle = '#ffffff';
     ctx.stroke();
-
-    // Draw bold white text centered inside the box
     ctx.fillStyle = '#ffffff';
     ctx.fillText(captionText, 576 / 2, boxY + boxHeight / 2);
-
-    // Draw secondary neon hashtag line below
     ctx.font = 'bold 16px sans-serif';
     ctx.fillStyle = '#00f2ea';
     ctx.fillText(aiData.hashtags, 576 / 2, boxY + boxHeight + 35);
-
     ctx.restore();
-
     frame++; if(frame>=total){clearInterval(interval); recorder.stop();}
   },1000/30);
  });
@@ -121,6 +111,31 @@ async function buildMp4(images){
 @app.route('/')
 def home():
     return render_template_string(HTML)
+
+@app.route('/manifest.json')
+def manifest():
+    return jsonify({
+        "name": "TikTok Studio Pro",
+        "short_name": "TikTok Studio",
+        "description": "Reliable HTML5 Canvas Generator for TikTok Videos",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#000000",
+        "theme_color": "#ff0050",
+        "icons": [
+            {
+                "src": "https://cdn-icons-png.flaticon.com/512/3046/3046120.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+            },
+            {
+                "src": "https://cdn-icons-png.flaticon.com/512/3046/3046120.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }
+        ]
+    })
 
 @app.route('/generate', methods=['POST'])
 def generate():
@@ -135,9 +150,7 @@ def generate():
     img1 = f"{base}/{p(idea+', vertical cinematic portrait')}?width=576&height=1024&nologo=true&seed={seed}"
     img2 = f"{base}/{p(idea+', neon lighting 4k vertical')}?width=576&height=1024&nologo=true&seed={seed+1}"
     img3 = f"{base}/{p(idea+', dark abstract background vertical')}?width=576&height=1024&nologo=true&seed={seed+2}"
-
     audio = f"https://translate.google.com/translate_tts?ie=UTF-8&q={p(viral_idea)}&tl=en&client=tw-ob"
-
     return jsonify({"viral_idea":viral_idea,"hashtags":hashtags,"script":script,"image1":img1,"image2":img2,"image3":img3,"audio_url":audio})
 
 if __name__ == '__main__':
