@@ -65,9 +65,52 @@ async function buildMp4(images){
     let idx=Math.floor((frame/total)*images.length); if(idx>=images.length) idx=images.length-1;
     let img=images[idx]; ctx.fillStyle='#000'; ctx.fillRect(0,0,576,1024);
     ctx.drawImage(img,0,0,576,1024);
-    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(0,840,576,184);
-    ctx.fillStyle='#fff'; ctx.font='bold 22px sans-serif'; ctx.fillText(aiData.viral_idea.substring(0,35),20,890);
-    ctx.fillStyle='#00f2ea'; ctx.font='15px sans-serif'; ctx.fillText(aiData.hashtags.substring(0,40),20,930);
+
+    // Dynamic TikTok Caption Box Style Simulation
+    let captionText = "";
+    if (frame < 90) {
+      captionText = aiData.viral_idea;
+    } else if (frame < 180) {
+      captionText = "CORE VALUE REVELATION";
+    } else {
+      captionText = "CALL TO ACTION - FOLLOW!";
+    }
+
+    ctx.save();
+    ctx.font = '900 26px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    let textWidth = ctx.measureText(captionText).width;
+    let boxWidth = Math.min(textWidth + 50, 520);
+    let boxHeight = 60;
+    let boxX = (576 - boxWidth) / 2;
+    let boxY = 780;
+
+    // Draw CapCut-style purple/magenta background pill box with border
+    ctx.fillStyle = 'rgba(168, 85, 247, 0.95)';
+    ctx.beginPath();
+    if (ctx.roundRect) {
+      ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 14);
+    } else {
+      ctx.rect(boxX, boxY, boxWidth, boxHeight);
+    }
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+
+    // Draw bold white text centered inside the box
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(captionText, 576 / 2, boxY + boxHeight / 2);
+
+    // Draw secondary neon hashtag line below
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillStyle = '#00f2ea';
+    ctx.fillText(aiData.hashtags, 576 / 2, boxY + boxHeight + 35);
+
+    ctx.restore();
+
     frame++; if(frame>=total){clearInterval(interval); recorder.stop();}
   },1000/30);
  });
@@ -93,7 +136,6 @@ def generate():
     img2 = f"{base}/{p(idea+', neon lighting 4k vertical')}?width=576&height=1024&nologo=true&seed={seed+1}"
     img3 = f"{base}/{p(idea+', dark abstract background vertical')}?width=576&height=1024&nologo=true&seed={seed+2}"
 
-    # Use reliable public TTS endpoint (Using standard gTTS proxy or fallback text endpoint)
     audio = f"https://translate.google.com/translate_tts?ie=UTF-8&q={p(viral_idea)}&tl=en&client=tw-ob"
 
     return jsonify({"viral_idea":viral_idea,"hashtags":hashtags,"script":script,"image1":img1,"image2":img2,"image3":img3,"audio_url":audio})
