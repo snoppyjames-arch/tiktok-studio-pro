@@ -38,7 +38,6 @@ body {
 }
 .subtitle-main { color: #00f2ea; font-size: 11px; letter-spacing: 2px; margin-top: 8px; font-weight: 700; }
 .subtitle-desc { color: #666; font-size: 11px; margin-top: 4px; }
-
 .input-container { margin: 20px 0 10px 0; }
 .input-box {
     width: 100%;
@@ -162,41 +161,41 @@ async function generate(){
   document.getElementById('result').innerHTML = `
     <div class="card">
         <div class="card-header"><h3 class="card-title">🎬 REAL AI GENERATED VIDEO</h3><span class="badge-type">MP4 VIDEO</span></div>
-        <div class="card-content-title">\${data.viral_idea}</div>
+        <div class="card-content-title">${data.viral_idea}</div>
         <div class="card-desc">Play your AI-generated video below:</div>
-        <video controls autoplay loop class="hd-video" src="\${data.video_url}"></video>
+        <video controls autoplay loop class="hd-video" src="${data.video_url}"></video>
         <div class="action-row">
-            <a class="action-btn" href="\${data.video_url}" target="_blank" download>Download Video MP4 📥</a>
-            <button class="action-btn" onclick="navigator.clipboard.writeText('\${data.viral_idea}');alert('Idea Copied!')">Copy Idea</button>
+            <a class="action-btn" href="${data.video_url}" target="_blank" download>Download Video MP4 📥</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText('${data.viral_idea}');alert('Idea Copied!')">Copy Idea</button>
         </div>
     </div>
     <div class="card cyan-border">
         <div class="card-header"><h3 class="card-title">🎙️ HD AI VOICE NARRATION</h3><span class="badge-type">HQ AUDIO</span></div>
         <div class="card-desc">Listen to the synthesized HD voiceover:</div>
-        <audio controls class="hd-audio" src="\${data.audio_url}"></audio>
+        <audio controls class="hd-audio" src="${data.audio_url}"></audio>
         <div class="action-row">
-            <a class="action-btn" href="\${data.audio_url}" target="_blank">Download HD Audio 🔊</a>
-            <button class="action-btn" onclick="navigator.clipboard.writeText('\${data.hook}');alert('Hook Copied!')">Copy Hook</button>
+            <a class="action-btn" href="${data.audio_url}" target="_blank">Download HD Audio 🔊</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText('${data.hook}');alert('Hook Copied!')">Copy Hook</button>
         </div>
     </div>
     <div class="card cyan-border">
         <div class="card-header"><h3 class="card-title">🖼️ CINEMATIC FRAME & SCRIPT</h3><span class="badge-type">30S ASSET</span></div>
-        <img class="ai-img" src="\${data.image2}" loading="lazy">
+        <img class="ai-img" src="${data.image2}" loading="lazy">
         <div class="card-content-title">Full Script Sequence</div>
-        <div class="card-desc">\${data.script.replace(/\\\\n/g,'<br>')}</div>
+        <div class="card-desc">${data.script.replace(/\\n/g,'<br>')}</div>
         <div class="action-row">
-            <button class="action-btn" onclick="navigator.clipboard.writeText(\`\${data.script}\`);alert('Script Copied!')">Copy Script</button>
-            <a class="action-btn" href="\${data.image2}" target="_blank">Download Image 📥</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText(\`${data.script}\`);alert('Script Copied!')">Copy Script</button>
+            <a class="action-btn" href="${data.image2}" target="_blank">Download Image 📥</a>
         </div>
     </div>
     <div class="card">
         <div class="card-header"><h3 class="card-title">🚀 THUMBNAIL & METADATA</h3><span class="badge-type">GROWTH</span></div>
-        <img class="ai-img" src="\${data.image3}" loading="lazy">
-        <div class="card-content-title">Peak Engagement: \${data.best_time}</div>
-        <div class="card-desc">Hashtags: \${data.hashtags}<br><br>Caption: \${data.caption}</div>
+        <img class="ai-img" src="${data.image3}" loading="lazy">
+        <div class="card-content-title">Peak Engagement: ${data.best_time}</div>
+        <div class="card-desc">Hashtags: ${data.hashtags}<br><br>Caption: ${data.caption}</div>
         <div class="action-row">
-            <button class="action-btn" onclick="navigator.clipboard.writeText(\`\${data.hashtags}\`);alert('Hashtags Copied!')">Copy Hashtags</button>
-            <a class="action-btn" href="\${data.image3}" target="_blank">Download Thumbnail 📥</a>
+            <button class="action-btn" onclick="navigator.clipboard.writeText(\`${data.hashtags}\`);alert('Hashtags Copied!')">Copy Hashtags</button>
+            <a class="action-btn" href="${data.image3}" target="_blank">Download Thumbnail 📥</a>
         </div>
     </div>
   `;
